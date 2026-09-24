@@ -1,5 +1,11 @@
 # Guía de demostración — MediaStream (6 microservicios)
 
+> **Nota:** desde que se agregó `api-gateway/` y `frontend/`, la aplicación
+> real es un único frontend en `http://localhost:5173` (habla solo con el
+> Gateway en `:3000`). Las consolas de abajo (3001–3006) siguen sirviendo
+> para preparar datos de prueba (crear un título, simular un ingest, etc.),
+> pero ya no son "la app": son paneles internos de cada microservicio.
+
 Todos los comandos se ejecutan en **cmd**, desde la carpeta **`MediaStream`** (la que
 contiene `docker-compose.yml` y las seis carpetas de servicios).
 

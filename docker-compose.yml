@@ -13,12 +13,20 @@
 # se hablen sin conocerse.
 #
 #   Servicio                   Consola               Base de datos
+#   frontend                   localhost:5173        —            (la app)
+#   api-gateway                localhost:3000        —            (único punto de entrada)
 #   user-service               localhost:3001        user-db      :5435
 #   catalog-service            localhost:3002        catalog-db   :5433
 #   playback-service           localhost:3003        playback-db  :5434
 #   media-processing-service   localhost:3004        media-db     :5436
 #   recommendation-service     localhost:3005        recommendation-db :5437 (pgvector)
 #   billing-service            localhost:3006        billing-db   :5438
+#
+# El único frontend de la aplicación es frontend/ (React), y habla
+# ÚNICAMENTE con api-gateway/ (sección 5 y 8.1 del documento de
+# arquitectura). Las "consolas" en los puertos 3001-3006 son paneles de
+# prueba internos de cada microservicio (útiles para desarrollarlo aislado),
+# no la aplicación: un usuario real nunca las visita.
 #
 # Uso:
 #   docker compose up -d --build                  → levanta todo
@@ -378,6 +386,60 @@ services:
         condition: service_healthy
       # NO depende de user-service: si User está caído, payment.failed
       # espera en la cola y se procesa cuando vuelva.
+    networks:
+      - mediastream-net
+
+  # ----------------------------------------------------------------- api-gateway
+  # Único punto de entrada del Cliente (sección 5 del documento). No tiene
+  # base de datos propia: solo enruta, autentica (JWT), limita solicitudes y
+  # registra logs con request-id. Depende de que los microservicios estén
+  # arriba para poder enrutarles tráfico, pero no de que respondan bien —
+  # si uno cae, el Gateway sigue sirviendo al resto.
+
+  api-gateway:
+    build:
+      context: ./api-gateway
+      dockerfile: Dockerfile
+    container_name: api-gateway
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      PORT: 3000
+      JWT_ACCESS_SECRET: "dev-access-secret"
+      CORS_ORIGINS: "http://localhost:5173"
+      USER_SERVICE_URL: "http://user-service:3001"
+      CATALOG_SERVICE_URL: "http://catalog-service:3002"
+      PLAYBACK_SERVICE_URL: "http://playback-service:3003"
+      MEDIA_SERVICE_URL: "http://media-processing-service:3004"
+      RECOMMENDATION_SERVICE_URL: "http://recommendation-service:3005"
+      BILLING_SERVICE_URL: "http://billing-service:3006"
+    depends_on:
+      - user-service
+      - catalog-service
+      - playback-service
+      - media-processing-service
+      - recommendation-service
+      - billing-service
+    networks:
+      - mediastream-net
+
+  # ------------------------------------------------------------------- frontend
+  # El ÚNICO frontend de MediaStream (sección 8.1). Habla solo con
+  # api-gateway, nunca con un microservicio directamente.
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_API_GATEWAY_URL: "http://localhost:3000"
+    container_name: frontend
+    restart: unless-stopped
+    ports:
+      - "5173:80"
+    depends_on:
+      - api-gateway
     networks:
       - mediastream-net
 

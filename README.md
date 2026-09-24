@@ -8,6 +8,8 @@ en Python/FastAPI.
 ```
 MediaStream/
 ├── docker-compose.yml             ← levanta toda la plataforma junta
+├── frontend/                      ← React (Vite) · el ÚNICO frontend de la aplicación
+├── api-gateway/                   ← NestJS · único punto de entrada del Cliente
 ├── user-service/                  ← NestJS · autónomo, con su propio compose
 ├── catalog-service/               ← NestJS · autónomo, con su propio compose
 ├── playback-service/              ← NestJS · autónomo, con su propio compose
@@ -18,6 +20,21 @@ MediaStream/
     └── verificar-independencia.sh
 ```
 
+## Un único frontend
+
+`frontend/` es la aplicación real (registro, catálogo, reproducción,
+recomendaciones, facturación). Habla **únicamente** con `api-gateway/`, que
+es el único punto de entrada del Cliente: enruta cada solicitud al
+microservicio correcto, valida el AccessToken, limita solicitudes y
+registra logs con request-id (sección 5 del documento de arquitectura). Los
+microservicios ya no reciben tráfico directo del navegador.
+
+Las "consolas" que sirve cada microservicio en `public/` (puertos
+3001–3006) siguen existiendo como paneles de prueba internos — útiles para
+probar un servicio aislado sin levantar toda la plataforma — pero **no son
+la aplicación**: ningún usuario real las visita, y `frontend/` no enlaza a
+ninguna de ellas.
+
 ---
 
 ## Levantar todo
@@ -26,10 +43,16 @@ MediaStream/
 docker compose up -d --build
 ```
 
-La primera vez tarda varios minutos (seis imágenes, más FFmpeg para Media).
+La primera vez tarda varios minutos (ocho imágenes, más FFmpeg para Media).
 
-| Servicio | Consola | Swagger | Base de datos | Responsabilidad |
+**La aplicación está en http://localhost:5173** — ahí se registra una
+cuenta, se explora el catálogo, se reproduce y se factura, todo a través
+del API Gateway. El resto de la tabla son piezas internas, no la app.
+
+| Servicio | URL | Swagger | Base de datos | Responsabilidad |
 |---|---|---|---|---|
+| **Frontend** | **http://localhost:5173** | — | — | **La aplicación** (único frontend) |
+| **API Gateway** | **http://localhost:3000** | — | — | **Único punto de entrada**: enruta, autentica, limita, loguea |
 | User | http://localhost:3001 | `/docs` | `user_service_db` · 5435 | Cuentas, login JWT, perfiles, restricción por pagos fallidos |
 | Catalog | http://localhost:3002 | `/docs` | `catalog_db` · 5433 | Títulos, temporadas, disponibilidad regional |
 | Playback | http://localhost:3003 | `/docs` | `playback_db` · 5434 | Token DRM, progreso, "seguir viendo" |
@@ -49,7 +72,14 @@ docker compose up --build
 
 ---
 
-## Las consolas
+## Las consolas (paneles de prueba internos, no la aplicación)
+
+Cada microservicio sigue trayendo su propia consola de pruebas en
+`public/`, pensada para desarrollarlo o depurarlo de forma aislada sin
+levantar toda la plataforma — es la misma utilidad que un Swagger, solo que
+con formulario en vez de documentación. **No es la aplicación**: el
+frontend real, `frontend/`, es una sola app en `http://localhost:5173` que
+no enlaza a ninguna de estas seis páginas.
 
 Las seis consolas web usan el mismo sistema visual (tipografía, estructura,
 componentes), pero cada servicio tiene su color para reconocerlo de un vistazo:
@@ -195,6 +225,13 @@ cola y se procese al volver, y que no haya imports cruzados. Apaga y enciende
 
 ## Probar el flujo completo
 
+Esto usa las consolas internas de cada servicio para preparar datos (crear
+un título, subir un vídeo, etc.) — es la forma más rápida de armar un
+escenario de prueba. Para probarlo como lo haría un usuario real, una vez
+que el catálogo tenga al menos un título `AVAILABLE`, se hace todo lo
+demás (registro, explorar, reproducir, recomendaciones, facturación) desde
+la aplicación única en `http://localhost:5173`.
+
 1. **User** (`:3001`): registra una cuenta e inicia sesión.
 2. **Catalog** (`:3002`): crea un título con disponibilidad en `CO`. Queda `PENDING`.
 3. **Media Processing** (`:3004`): en *Nuevo ingest*, pon el ID del título y sube
@@ -228,5 +265,6 @@ Para agregar uno nuevo, el patrón es el mismo:
 4. Su consola, copiada de cualquiera de las seis, con su propio color, y una fila
    más en el selector de servicios de todas.
 
-Según el documento de arquitectura faltan **Notification-Service**,
-**Analytics-Service** y el **API Gateway**.
+Según el documento de arquitectura faltan **Notification-Service** y
+**Analytics-Service**. El **API Gateway** y el **frontend único** ya están
+construidos (`api-gateway/` y `frontend/`).

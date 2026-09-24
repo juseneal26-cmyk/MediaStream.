@@ -1,0 +1,598 @@
+:root {
+  --bg: #0b0d12;
+  --bg-elevated: #151822;
+  --bg-card: #1b1f2b;
+  --border: #2a2f3d;
+  --text: #eef0f5;
+  --text-muted: #9aa1b5;
+  --accent: #e0365a;
+  --accent-hover: #ff4d70;
+  --success: #4cae6a;
+  --warning: #e0b04c;
+  --danger: #e0576a;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+input,
+select {
+  font-family: inherit;
+  font-size: 0.95rem;
+}
+
+.app-shell {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.page,
+main > .auth-page,
+main > .profiles-page {
+  padding: 24px 32px 64px;
+}
+
+.page-loading {
+  padding: 64px;
+  text-align: center;
+  color: var(--text-muted);
+}
+
+/* ---------- Navbar ---------- */
+.navbar {
+  background: var(--bg-elevated);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.navbar-inner {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 12px 32px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.brand {
+  font-weight: 800;
+  font-size: 1.2rem;
+  color: var(--accent);
+  letter-spacing: 0.5px;
+}
+
+.nav-links {
+  display: flex;
+  gap: 20px;
+  flex: 1;
+}
+
+.nav-links a {
+  color: var(--text-muted);
+  font-weight: 500;
+  padding: 6px 0;
+  border-bottom: 2px solid transparent;
+}
+
+.nav-links a.active,
+.nav-links a:hover {
+  color: var(--text);
+  border-color: var(--accent);
+}
+
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.account-email {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+.profile-pill {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 6px 14px;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.status-banner {
+  padding: 10px 32px;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.status-banner a {
+  text-decoration: underline;
+  font-weight: 600;
+}
+
+.status-banner.status-morosa {
+  background: rgba(224, 176, 76, 0.15);
+  color: var(--warning);
+}
+
+.status-banner.status-suspendida {
+  background: rgba(224, 87, 90, 0.15);
+  color: var(--danger);
+}
+
+/* ---------- Buttons ---------- */
+.btn-primary {
+  background: var(--accent);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 20px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.btn-primary:hover {
+  background: var(--accent-hover);
+}
+
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 9px 16px;
+  cursor: pointer;
+}
+
+.btn-ghost:hover {
+  color: var(--text);
+  border-color: var(--text-muted);
+}
+
+.btn-small {
+  padding: 6px 12px;
+  font-size: 0.85rem;
+}
+
+/* ---------- Auth pages ---------- */
+.auth-page {
+  min-height: 80vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.auth-card {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 40px;
+  width: 360px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.auth-card h1 {
+  margin: 0;
+  color: var(--accent);
+}
+
+.auth-subtitle {
+  color: var(--text-muted);
+  margin: -8px 0 8px;
+}
+
+.auth-card label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.auth-card input {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 10px 12px;
+  color: var(--text);
+}
+
+.checkbox-label {
+  flex-direction: row !important;
+  align-items: center;
+  gap: 8px !important;
+}
+
+.checkbox-label input {
+  width: auto;
+}
+
+.auth-switch {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+.auth-switch a {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.form-error {
+  background: rgba(224, 87, 90, 0.15);
+  color: var(--danger);
+  padding: 10px 14px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+}
+
+.form-success {
+  background: rgba(76, 174, 106, 0.15);
+  color: var(--success);
+  padding: 10px 14px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  margin-bottom: 16px;
+}
+
+/* ---------- Profiles ---------- */
+.profiles-page {
+  text-align: center;
+  padding-top: 64px;
+}
+
+.profiles-grid {
+  display: flex;
+  gap: 24px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 32px;
+}
+
+.profile-card {
+  background: transparent;
+  border: none;
+  color: var(--text);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.profile-avatar {
+  width: 96px;
+  height: 96px;
+  border-radius: 12px;
+  background: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  font-weight: 700;
+  transition: outline 0.15s;
+}
+
+.profile-avatar.kids {
+  background: var(--warning);
+}
+
+.profile-card:hover .profile-avatar {
+  outline: 3px solid white;
+}
+
+.profile-kids-tag {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+
+/* ---------- Catalog ---------- */
+.catalog-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.catalog-filters {
+  display: flex;
+  gap: 10px;
+}
+
+.catalog-filters select {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 6px;
+  padding: 8px 12px;
+}
+
+.kids-notice {
+  color: var(--warning);
+  font-size: 0.85rem;
+  margin-bottom: 16px;
+}
+
+.title-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 20px;
+}
+
+.title-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.15s, border-color 0.15s;
+}
+
+.title-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--accent);
+}
+
+.title-card-thumb {
+  height: 100px;
+  background: linear-gradient(135deg, var(--accent), var(--bg-card));
+  display: flex;
+  align-items: flex-end;
+  padding: 8px;
+}
+
+.title-card-type {
+  background: rgba(0, 0, 0, 0.5);
+  color: white;
+  font-size: 0.7rem;
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+
+.title-card-body {
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.title-card-body h3 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.title-card-meta {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.75rem;
+}
+
+.title-card-synopsis {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ---------- Title detail ---------- */
+.title-detail-meta {
+  color: var(--text-muted);
+}
+
+.title-detail-synopsis {
+  max-width: 700px;
+  line-height: 1.5;
+}
+
+.episode-list {
+  margin-top: 24px;
+}
+
+.season-block ul {
+  list-style: none;
+  padding: 0;
+}
+
+.season-block li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 14px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin-bottom: 8px;
+}
+
+.availability-list {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.availability-list li {
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  border: 1px solid var(--border);
+}
+
+.availability-list li.available {
+  color: var(--success);
+  border-color: var(--success);
+}
+
+.availability-list li.unavailable {
+  color: var(--text-muted);
+}
+
+/* ---------- Player ---------- */
+.player-page {
+  text-align: center;
+}
+
+.player-screen {
+  background: black;
+  border-radius: 12px;
+  height: 360px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin: 20px 0;
+}
+
+.player-icon {
+  font-size: 3rem;
+}
+
+.player-hint {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+.player-progress {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.player-progress-bar {
+  flex: 1;
+  height: 6px;
+  background: var(--bg-card);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.player-progress-fill {
+  height: 100%;
+  background: var(--accent);
+}
+
+.player-controls {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.player-meta {
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  margin-top: 24px;
+  word-break: break-all;
+}
+
+/* ---------- Billing ---------- */
+.billing-card {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 32px;
+}
+
+.billing-card label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.billing-card select,
+.billing-card input {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 10px 12px;
+  color: var(--text);
+}
+
+.card-hint {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.card-hint code {
+  background: var(--bg-card);
+  padding: 1px 5px;
+  border-radius: 4px;
+}
+
+.plan-switch {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.billing-history {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.billing-history th,
+.billing-history td {
+  text-align: left;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.85rem;
+}
+
+.payment-row {
+  font-size: 0.75rem;
+}
+
+.payment-row.payment-exitoso {
+  color: var(--success);
+}
+
+.payment-row.payment-fallido {
+  color: var(--danger);
+}
+
+.payment-row.payment-pendiente {
+  color: var(--warning);
+}
