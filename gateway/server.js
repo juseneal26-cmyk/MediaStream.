@@ -3,11 +3,10 @@ const { createProxyMiddleware } = require('http-proxy-middleware');
 
 const app = express();
 
-function proxyFor(prefix, target) {
+function proxyFor(target) {
   return createProxyMiddleware({
     target,
     changeOrigin: true,
-    pathRewrite: (path) => prefix + path,
   });
 }
 
@@ -21,7 +20,7 @@ const routes = {
 };
 
 for (const [prefix, target] of Object.entries(routes)) {
-  app.use(prefix, proxyFor(prefix, target));
+  app.use(prefix, proxyFor(target));
 }
 
 app.get('/health', (req, res) => res.json({ status: 'ok' }));
